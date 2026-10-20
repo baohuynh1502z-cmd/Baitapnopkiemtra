@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Tập 01 - Danh Sách Sản Phẩm</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .search-box {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .search-box input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .product-card h3 {
+            font-size: 16px;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+        .price {
+            color: #2563eb;
+            font-weight: bold;
+        }
+        .no-result {
+            color: #ef4444;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <nav class="navbar">
+            <ul>
+                <li><a href="index.html">Trang chủ</a></li>
+                <li><a href="lythuyet.html">Lý thuyết (a)</a></li>
+                <li><a href="baitap01.html">Bài tập 01</a></li>
+                <li><a href="baitap02.html">Bài tập 22 (c)</a></li>
+                <li><a href="baitap03.html">Bài tập 23 (b)</a></li>
+                <li><a href="about.html">Điểm danh (d)</a></li>
+                <li><a href="contact.html">Liên hệ</a></li>
+            </ul>
+        </nav>
+
+        <h1>BÀI TẬP 01: DANH SÁCH & TÌM KIẾM SẢN PHẨM</h1>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Nhập tên sản phẩm cần tìm..." onkeyup="filterProducts()">
+        </div>
+
+        <div id="productGrid" class="product-grid"></div>
+
+        <hr style="margin: 30px 0;">
+        <h2>💡 Logic Tư Duy & Tối Ưu Lập Trình:</h2>
+        <ul>
+            <li><strong>Xử lý Input phòng chống Injection:</strong> Giá trị tìm kiếm được ép kiểu chuỗi, cắt khoảng trắng dư thừa bằng <code>trim()</code> và chuyển về chữ thường bằng <code>toLowerCase()</code>. Render dữ liệu vào DOM dùng <code>textContent</code> thay vì gán <code>innerHTML</code> chứa trực tiếp chuỗi user để ngăn ngừa nguy cơ tấn công XSS.</li>
+            <li><strong>Tối ưu tìm kiếm:</strong> Sử dụng phương thức mảng <code>filter()</code> kết hợp <code>includes()</code> để tìm kiếm thời gian thực (real-time) với độ phức tạp tuyến tính O(N).</li>
+        </ul>
+    </div>
+
+    <script>
+        const products = [
+            { id: 1, name: "Laptop Dell XPS 13", price: "28.500.000 VNĐ" },
+            { id: 2, name: "Điện thoại iPhone 15 Pro", price: "27.990.000 VNĐ" },
+            { id: 3, name: "Tai nghe Sony WH-1000XM5", price: "7.490.000 VNĐ" },
+            { id: 4, name: "Bàn phím cơ Keychron K2", price: "1.950.000 VNĐ" },
+            { id: 5, name: "Chuột Logitech MX Master 3S", price: "2.350.000 VNĐ" },
+            { id: 6, name: "Màn hình Dell UltraSharp 27 inch", price: "9.200.000 VNĐ" }
+        ];
+
+        function displayProducts(items) {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+
+            if (items.length === 0) {
+                grid.innerHTML = '<div class="no-result">⚠️ Không tìm thấy sản phẩm nào phù hợp!</div>';
+                return;
+            }
+
+            items.forEach(prod => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                
+                const title = document.createElement('h3');
+                title.textContent = prod.name; // Dùng textContent an toàn chống XSS
+                
+                const price = document.createElement('p');
+                price.className = 'price';
+                price.textContent = prod.price;
+
+                card.appendChild(title);
+                card.appendChild(price);
+                grid.appendChild(card);
+            });
+        }
+
+        function filterProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const filtered = products.filter(p => p.name.toLowerCase().includes(query));
+            displayProducts(filtered);
+        }
+
+        // Khởi tạo danh sách lần đầu
+        displayProducts(products);
+    </script>
+    <script src="js/script.js"></script>
+</body>
+</html>

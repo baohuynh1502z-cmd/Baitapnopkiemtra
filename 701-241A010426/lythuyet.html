@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trả Lời Lý Thuyết - Huỳnh Quốc Bảo</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <nav class="navbar">
+            <ul>
+                <li><a href="index.html">Trang chủ</a></li>
+                <li><a href="lythuyet.html">Lý thuyết (a)</a></li>
+                <li><a href="baitap01.html">Bài tập 01</a></li>
+                <li><a href="baitap02.html">Bài tập 22 (c)</a></li>
+                <li><a href="baitap03.html">Bài tập 23 (b)</a></li>
+                <li><a href="about.html">Điểm danh (d)</a></li>
+                <li><a href="contact.html">Liên hệ</a></li>
+            </ul>
+        </nav>
+
+        <h1>PHẦN I: TRẢ LỜI CÂU HỎI LÝ THUYẾT (40 ĐIỂM)</h1>
+
+        <!-- Câu 1 -->
+        <h2>Câu 1 (10 điểm): Phân biệt position absolute & relative trong CSS</h2>
+        <p><strong>1. Phân biệt:</strong></p>
+        <ul>
+            <li><code>position: relative</code>: Dịch chuyển phần tử so với vị trí gốc của nó. Khoảng trống gốc vẫn giữ nguyên trên luồng tài liệu. Thường được gán cho khung cha để làm gốc tọa độ.</li>
+            <li><code>position: absolute</code>: Định vị phần tử theo khung cha gần nhất có <code>position</code> khác <code>static</code>. Phần tử bị tách khỏi luồng tài liệu (không chiếm khoảng trống).</li>
+        </ul>
+        <p><strong>2. Ví dụ Layout Responsive (Badge sản phẩm):</strong></p>
+<pre><code>.product-card {
+    position: relative; /* Làm gốc tọa độ */
+    width: 100%;
+    max-width: 300px;
+}
+.badge-sale {
+    position: absolute; /* Cố định góc trên bên phải */
+    top: 10px;
+    right: 10px;
+    background: red;
+    color: white;
+}</code></pre>
+        <p><strong>3. Ảnh hưởng khi Deploy Hosting:</strong> Khi lạm dụng <code>absolute</code> với kích thước pixel cố định cho layout chính, giao diện sẽ bị đè chữ hoặc vỡ khung trên thiết bị di động. Cần kết hợp Flexbox/Grid cho khung tổng và chỉ dùng <code>absolute</code> cho chi tiết trang trí nhỏ.</p>
+
+        <!-- Câu 2 -->
+        <h2>Câu 2 (10 điểm): Quy trình đăng ký Domain, Hosting, DNS & Bảo mật</h2>
+        <p><strong>1. Quy trình thiết lập:</strong> Mua/đăng ký Tên miền (Domain) và Hosting → Trỏ DNS Record (A Record gán IP hosting hoặc CNAME) → Upload mã nguồn lên server via FTP/FileZilla hoặc Git.</p>
+        <p><strong>2. Vai trò DNS:</strong> Hệ thống phân giải tên miền (DNS) chuyển đổi tên miền dạng chữ dễ nhớ (ví dụ: <code>coffehqb.freedev.app</code>) thành địa chỉ IP số của server hosting.</p>
+        <p><strong>3. 2 Công cụ Serverless Deployment:</strong> <strong>GitHub Pages</strong> và <strong>Netlify</strong> (hoặc InfinityFree) hỗ trợ deploy trực tiếp từ kho mã nguồn miễn phí.</p>
+        <p><strong>4. Rủi ro bảo mật:</strong> Nếu không cấu hình HTTPS (chứng chỉ SSL), dữ liệu truyền tải sẽ bị chặn bắt (man-in-the-middle). Không ẩn file môi trường (<code>.env</code>) dễ làm lộ API key hoặc FTP credentials.</p>
+
+        <!-- Câu 3 -->
+        <h2>Câu 3 (10 điểm): So sánh let, const, var; Hoisting và Debugging</h2>
+        <p><strong>1. Bảng so sánh:</strong></p>
+        <table border="1" style="width: 100%; border-collapse: collapse; margin: 10px 0; text-align: left;">
+            <tr style="background: #e2e8f0;">
+                <th style="padding: 8px;">Đặc tính</th>
+                <th style="padding: 8px;">var</th>
+                <th style="padding: 8px;">let</th>
+                <th style="padding: 8px;">const</th>
+            </tr>
+            <tr>
+                <td style="padding: 8px;">Scope</td>
+                <td style="padding: 8px;">Function Scope</td>
+                <td style="padding: 8px;">Block Scope <code>{}</code></td>
+                <td style="padding: 8px;">Block Scope <code>{}</code></td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;">Hoisting</td>
+                <td style="padding: 8px;">Có (khởi tạo <code>undefined</code>)</td>
+                <td style="padding: 8px;">Có (nằm trong TDZ)</td>
+                <td style="padding: 8px;">Có (nằm trong TDZ)</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px;">Gán lại giá trị</td>
+                <td style="padding: 8px;">Có</td>
+                <td style="padding: 8px;">Có</td>
+                <td style="padding: 8px;">Không</td>
+            </tr>
+        </table>
+        <p><strong>2. Minh họa lỗi sai biến var trong vòng lặp bất đồng bộ:</strong></p>
+<pre><code>// Lỗi dùng var: In ra 3 ba lần vì var bị nâng lên Function scope
+for (var i = 0; i &lt; 3; i++) {
+    setTimeout(() => console.log("var:", i), 100); // Kết quả: 3, 3, 3
+}
+
+// Sửa lỗi với let (Block scope tạo riêng biến i cho mỗi vòng lặp):
+for (let j = 0; j &lt; 3; j++) {
+    setTimeout(() => console.log("let:", j), 100); // Kết quả: 0, 1, 2
+}</code></pre>
+        <p><strong>3. Cách Debug bằng Chrome DevTools:</strong> Nhấn <code>F12</code> → Mở tab <strong>Sources</strong> → Nhấp vào dòng code muốn đặt <strong>Breakpoint</strong> → F10/F11 để chạy từng dòng và soi giá trị biến tại bảng <em>Scope/Watch</em>.</p>
+
+        <!-- Câu 4 -->
+        <h2>Câu 4 (10 điểm): Event Delegation trong JavaScript</h2>
+        <p><strong>1. Khái niệm:</strong> Event Delegation tận dụng cơ chế <em>Event Bubbling</em> (sự kiện nổi bọt từ phần tử con lên cha) để gắn 1 hàm xử lý sự kiện duy nhất ở thẻ cha thay vì gán cho từng thẻ con.</p>
+        <p><strong>2. Ví dụ xử lý danh sách động (Dynamic List):</strong></p>
+<pre><code>// Thẻ cha &lt;ul id="myList"&gt;&lt;/ul&gt;
+document.getElementById('myList').addEventListener('click', (e) => {
+    if (e.target && e.target.nodeName === 'LI') {
+        console.log("Đã click vào:", e.target.textContent);
+    }
+});</code></pre>
+        <p><strong>3. Lợi ích tối ưu hiệu suất:</strong> Giảm thiểu bộ nhớ RAM khi danh sách có hàng nghìn phần tử, và tự động bắt sự kiện cho các phần tử <code>&lt;li&gt;</code> mới được thêm vào qua DOM mà không cần gán lại listener.</p>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

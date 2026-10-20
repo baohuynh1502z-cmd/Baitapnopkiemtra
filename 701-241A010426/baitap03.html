@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Tập 03 - Đồng Hồ Đếm Ngược</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .timer-box { text-align: center; background: #0f172a; color: #ffffff; padding: 35px; border-radius: 12px; max-width: 400px; margin: 0 auto; }
+        .timer-display { font-size: 52px; font-weight: bold; font-family: Consolas, monospace; color: #38bdf8; margin: 20px 0; }
+        .warning-mode { color: #ef4444 !important; animation: pulse 1s infinite alternate; }
+        @keyframes pulse { 0% { transform: scale(1); } 100% { transform: scale(1.06); } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <nav class="navbar">
+            <ul>
+                <li><a href="index.html">Trang chủ</a></li>
+                <li><a href="lythuyet.html">Lý thuyết (a)</a></li>
+                <li><a href="baitap01.html">Bài tập 01</a></li>
+                <li><a href="baitap02.html">Bài tập 02</a></li>
+                <li><a href="baitap03.html">Bài tập 03</a></li>
+                <li><a href="baitap22.html">Bài tập 22 (c)</a></li>
+                <li><a href="baitap23.html">Bài tập 23 (b)</a></li>
+                <li><a href="about.html">Điểm danh (d)</a></li>
+                <li><a href="contact.html">Liên hệ</a></li>
+            </ul>
+        </nav>
+
+        <h1>BÀI TẬP 03: ĐỒNG HỒ ĐẾM NGƯỢC 10 PHÚT</h1>
+
+        <div class="timer-box">
+            <h2>Thời Gian Làm Bài</h2>
+            <div id="timerDisplay" class="timer-display">10:00</div>
+            <button class="btn" onclick="startTimer()">Bắt Đầu</button>
+            <button class="btn" style="background:#64748b;" onclick="resetTimer()">Đặt Lại</button>
+        </div>
+    </div>
+
+    <script>
+        let totalSeconds = 600;
+        let timerInterval = null;
+
+        function updateDisplay() {
+            const m = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+            const s = String(totalSeconds % 60).padStart(2, '0');
+            const display = document.getElementById('timerDisplay');
+            display.textContent = `${m}:${s}`;
+            if (totalSeconds < 60 && totalSeconds > 0) display.classList.add('warning-mode');
+            else display.classList.remove('warning-mode');
+        }
+
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (totalSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    alert("⏰ Đã hết thời gian 10 phút làm bài!");
+                    return;
+                }
+                totalSeconds--;
+                updateDisplay();
+            }, 1000);
+        }
+
+        function resetTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = null;
+            totalSeconds = 600;
+            updateDisplay();
+        }
+
+        updateDisplay();
+    </script>
+    <script src="js/script.js"></script>
+</body>
+</html>

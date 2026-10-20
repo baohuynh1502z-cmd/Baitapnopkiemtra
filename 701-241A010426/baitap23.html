@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hiệu Ứng Đèn Kéo Quân 3D - Huỳnh Quốc Bảo</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f172a;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #f59e0b;
+            font-size: 28px;
+            margin-bottom: 8px;
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        }
+
+        .header p {
+            color: #94a3b8;
+            font-size: 16px;
+        }
+
+        /* Không gian 3D */
+        .scene {
+            width: 220px;
+            height: 300px;
+            perspective: 1000px;
+            margin: 40px auto;
+        }
+
+        /* Đèn kéo quân (chứa 6 mặt) */
+        .lantern {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        /* Mỗi mặt của đèn */
+        .face {
+            position: absolute;
+            width: 200px;
+            height: 280px;
+            left: 10px;
+            top: 10px;
+            border: 3px solid #f59e0b;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #1e293b;
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+            cursor: pointer;
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+        }
+
+        /* Hiệu ứng nổi bật khi rê chuột vào 1 mặt */
+        .face:hover {
+            border-color: #ef4444;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.9);
+        }
+
+        .face img {
+            width: 100%;
+            height: 82%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .face .caption {
+            height: 18%;
+            background: rgba(15, 23, 42, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fbbf24;
+            font-weight: bold;
+            font-size: 14px;
+            border-top: 1px solid #f59e0b;
+        }
+
+        /* Định vị 6 mặt theo hình lục giác 3D (Xoay 60 độ mỗi mặt, translateZ ~ 190px) */
+        .face:nth-child(1) { transform: rotateY(0deg) translateZ(190px); }
+        .face:nth-child(2) { transform: rotateY(60deg) translateZ(190px); }
+        .face:nth-child(3) { transform: rotateY(120deg) translateZ(190px); }
+        .face:nth-child(4) { transform: rotateY(180deg) translateZ(190px); }
+        .face:nth-child(5) { transform: rotateY(240deg) translateZ(190px); }
+        .face:nth-child(6) { transform: rotateY(300deg) translateZ(190px); }
+
+        .status-msg {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #38bdf8;
+            background: rgba(56, 189, 248, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Mô Phỏng Đèn Kéo Quân 3D</h1>
+        <p>Sinh viên: <strong>Huỳnh Quốc Bảo</strong> - MSSV: <strong>241A010426</strong></p>
+    </div>
+
+    <!-- Khung cảnh 3D -->
+    <div class="scene">
+        <div class="lantern" id="lantern">
+            <div class="face">
+                <img src="https://picsum.photos/id/1015/300/400" alt="Hình 1">
+                <div class="caption">Hình ảnh 1</div>
+            </div>
+            <div class="face">
+                <img src="https://picsum.photos/id/1025/300/400" alt="Hình 2">
+                <div class="caption">Hình ảnh 2</div>
+            </div>
+            <div class="face">
+                <img src="https://picsum.photos/id/1035/300/400" alt="Hình 3">
+                <div class="caption">Hình ảnh 3</div>
+            </div>
+            <div class="face">
+                <img src="https://picsum.photos/id/1043/300/400" alt="Hình 4">
+                <div class="caption">Hình ảnh 4</div>
+            </div>
+            <div class="face">
+                <img src="https://picsum.photos/id/1050/300/400" alt="Hình 5">
+                <div class="caption">Hình ảnh 5</div>
+            </div>
+            <div class="face">
+                <img src="https://picsum.photos/id/1069/300/400" alt="Hình 6">
+                <div class="caption">Hình ảnh 6</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-msg" id="statusMsg">
+        💡 Trạng thái: Đèn đang quay vòng tròn... (Rê chuột vào hình để dừng)
+    </div>
+
+    <script>
+        const lantern = document.getElementById('lantern');
+        const faces = document.querySelectorAll('.face');
+        const statusMsg = document.getElementById('statusMsg');
+
+        let currentAngle = 0;
+        let isPaused = false;
+        const speed = 0.4; // Tốc độ quay (độ mỗi frame)
+
+        // Hàm điều khiển quay đèn bằng JavaScript
+        function rotateLantern() {
+            if (!isPaused) {
+                currentAngle += speed;
+                if (currentAngle >= 360) {
+                    currentAngle = 0;
+                }
+                lantern.style.transform = `rotateY(${currentAngle}deg)`;
+            }
+            requestAnimationFrame(rotateLantern);
+        }
+
+        // Khởi động hiệu ứng quay
+        rotateLantern();
+
+        // Bắt sự kiện rê chuột vào/ra trên từng mặt ảnh
+        faces.forEach((face, index) => {
+            // Khi đưa chuột vào một hình -> Dừng đèn
+            face.addEventListener('mouseenter', () => {
+                isPaused = true;
+                statusMsg.style.color = '#ef4444';
+                statusMsg.innerHTML = `🛑 Đã dừng lại tại <strong>Hình ảnh ${index + 1}</strong>`;
+            });
+
+            // Khi rê chuột ra ngoài -> Đèn quay tiếp
+            face.addEventListener('mouseleave', () => {
+                isPaused = false;
+                statusMsg.style.color = '#38bdf8';
+                statusMsg.innerHTML = '💡 Trạng thái: Đèn đang quay vòng tròn... (Rê chuột vào hình để dừng)';
+            });
+        });
+    </script>
+
+</body>
+</html>
